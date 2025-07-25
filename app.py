@@ -27,10 +27,11 @@ if uploaded_file:
 
     with st.spinner("Analyzing terrain..."):
         model, transform = load_model()
-        input_tensor = transform(img_rgb).unsqueeze(0)  # Add batch dimension
+        input_tensor = transform(img_rgb)  # ← FIXED HERE
         with torch.no_grad():
             prediction = model(input_tensor)[0]
             depth_map = prediction.squeeze().cpu().numpy()
+
 
         # Normalize depth for visualization
         norm_depth = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
