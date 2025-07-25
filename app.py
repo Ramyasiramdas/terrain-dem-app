@@ -27,7 +27,7 @@ if uploaded_file:
 
     with st.spinner("Analyzing terrain..."):
         model, transform = load_model()
-        input_tensor = transform(img_rgb).unsqueeze(0)
+        input_tensor = transform(img_rgb).unsqueeze(0)  # Add batch dimension
         with torch.no_grad():
             prediction = model(input_tensor)[0]
             depth_map = prediction.squeeze().cpu().numpy()
@@ -35,6 +35,7 @@ if uploaded_file:
         # Normalize depth for visualization
         norm_depth = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
+        # 3D Visualization
         st.subheader("Estimated Terrain (3D Visualization)")
         fig = plt.figure(figsize=(10, 6))
         ax = fig.add_subplot(111, projection='3d')
@@ -42,21 +43,23 @@ if uploaded_file:
         h, w = norm_depth.shape
         X, Y = np.meshgrid(np.arange(w), np.arange(h))
         surf = ax.plot_surface(X, Y, norm_depth, cmap='terrain', edgecolor='none')
+
         ax.view_init(elev=60, azim=-60)
         ax.set_title("Surface Terrain Elevation")
         ax.set_xlabel("X (distance)")
         ax.set_ylabel("Y (distance)")
         ax.set_zlabel("Elevation")
         ax.set_axis_off()
-        fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label="Elevation in units")
+
+        fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label="Elevation Scale")
         st.pyplot(fig)
 
-        # Terrain Info Section
+        # Terrain Summary
         st.subheader("Terrain Summary")
-        elevation_min = np.min(depth_map)
-        elevation_max = np.max(depth_map)
-        elevation_mean = np.mean(depth_map)
-        elevation_std = np.std(depth_map)
+        elevation_min = float(np.min(depth_map))
+        elevation_max = float(np.max(depth_map))
+        elevation_mean = float(np.mean(depth_map))
+        elevation_std = float(np.std(depth_map))
         elevation_range = elevation_max - elevation_min
 
         if elevation_range < 10:
@@ -67,11 +70,11 @@ if uploaded_file:
             terrain_type = "Mountainous terrain"
 
         st.markdown(f"""
-        - **Terrain Type**: {terrain_type}  
-        - **Min Elevation**: {elevation_min:.2f}  
-        - **Max Elevation**: {elevation_max:.2f}  
-        - **Mean Elevation**: {elevation_mean:.2f}  
-        - **Elevation Std Dev**: {elevation_std:.2f}
+        - **Terrain Type**: `{terrain_type}`
+        - **Min Elevation**: `{elevation_min:.2f}`
+        - **Max Elevation**: `{elevation_max:.2f}`
+        - **Mean Elevation**: `{elevation_mean:.2f}`
+        - **Elevation Std Dev**: `{elevation_std:.2f}`
         """)
 
         # Slope Map
@@ -89,6 +92,7 @@ if uploaded_file:
         ax2.set_title("Contour Lines over Terrain")
         ax2.axis("off")
         st.pyplot(fig2)
+
 
 
 
