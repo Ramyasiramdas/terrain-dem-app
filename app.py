@@ -78,13 +78,6 @@ if uploaded_file:
         - **Elevation Std Dev**: `{elevation_std:.2f}`
         """)
 
-        # Slope Map
-        st.subheader("Slope Map")
-        dy, dx = np.gradient(depth_map)
-        slope = np.sqrt(dx**2 + dy**2)
-        slope_img = cv2.normalize(slope, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-        st.image(slope_img, caption="Slope Map (gradient magnitude)", use_container_width=True)
-
         # Contour Lines
         st.subheader("Contour Map")
         fig2, ax2 = plt.subplots(figsize=(8, 6))
