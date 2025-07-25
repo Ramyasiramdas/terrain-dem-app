@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 import plotly.graph_objects as go
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="centered")
 st.title("TerraScope: Realistic Terrain from 2D Images")
 
 uploaded_file = st.file_uploader("Upload an aerial image", type=["jpg", "jpeg", "png"])
@@ -75,7 +75,7 @@ if uploaded_file:
         - **Min Elevation**: `{elevation_min:.2f}`
         - **Max Elevation**: `{elevation_max:.2f}`
         - **Mean Elevation**: `{elevation_mean:.2f}`
-        - **Elevation Std Dev**: `{elevation_std:.2f}`
+        - **Elevation Standard Deviation**: `{elevation_std:.2f}`
         """)
 
         # Contour Lines
